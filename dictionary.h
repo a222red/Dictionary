@@ -1,6 +1,15 @@
+#ifndef PY_DICT
+#define PY_DICT
+
 #include <vector>
 #include <algorithm>
-#include <utility>
+
+template<typename key_type, typename val_type>
+class pair {
+  public:
+  key_type key;
+  val_type val;
+};
 
 template<typename key_type, typename val_type>
 class dict {
@@ -21,17 +30,17 @@ class dict {
         }
         return vals[std::find(keys.begin(),keys.end(),key)-keys.begin()];
     }
-    dict& operator+(dict d) {
+    dict& operator+(dict<key_type,val_type> d) {
         keys.insert(keys.end(),d.keys.begin(),d.keys.end());
         vals.insert(vals.end(),d.vals.begin(),d.vals.end());
         return *this;
     }
-    std::vector<std::pair<key_type, val_type>> items() {
-        std::vector<std::pair<key_type, val_type>> v;
-        std::pair<key_type, val_type> s;
+    std::vector<pair<key_type, val_type>> items() {
+        std::vector<pair<key_type, val_type>> v;
+        pair<key_type, val_type> s;
         for (int i = 0; i < keys.end()-keys.begin(); ++i) {
-            s.first = keys[i];
-            s.second = vals[i];
+            s.key = keys[i];
+            s.val = vals[i];
             v.push_back(s);
         }
         return v;
@@ -40,10 +49,10 @@ class dict {
         keys = {};
         vals = {};
     }
-    std::pair<key_type, val_type> popitem() {
-        std::pair<key_type, val_type> item;
-        item.first = keys[keys.end()-keys.begin()-1];
-        item.second = vals[vals.end()-vals.begin()-1];
+    pair<key_type, val_type> pop_item() {
+        pair<key_type, val_type> item;
+        item.key = keys[keys.end()-keys.begin()-1];
+        item.val = vals[vals.end()-vals.begin()-1];
         keys.pop_back();
         vals.pop_back();
         return item;
@@ -57,4 +66,15 @@ class dict {
     key_type& get_key_by_value(key_type val) {
         return keys[std::find(vals.begin(),vals.end(),val)-vals.begin()];
     }
+    key_type& index_key(int i) {
+        return keys[i];
+    }
+    val_type& index_value(int i) {
+        return vals[i];
+    }
+    int len() {
+        return keys.end()-keys.begin();
+    }
 };
+
+#endif
